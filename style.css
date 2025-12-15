@@ -1,0 +1,423 @@
+:root {
+    --red: #d42426;
+    --dark-red: #b33939;
+    --gold: #f1c40f;
+    --green: #27ae60;
+    --wood: #5d4037;
+    --wood-dark: #3e2723;
+    --paper: #fffdf2;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* --- 1. CẤU HÌNH CHUNG & MOBILE FIX --- */
+body {
+    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+    color: white;
+    font-family: 'Nunito', sans-serif;
+    /* Fix lỗi chiều cao trên Mobile (thanh địa chỉ) */
+    height: 100vh; 
+    height: 100dvh; 
+    overflow: hidden;
+    position: relative;
+    /* Ngăn delay khi chạm trên mobile */
+    touch-action: manipulation; 
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* --- 2. LOADING SCREEN (MỚI) --- */
+#loading {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: #0f2027; z-index: 9999;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    transition: opacity 0.8s ease-out;
+}
+.heart-loader {
+    font-size: 4rem; margin-bottom: 15px;
+    animation: heartbeat 1.2s infinite ease-in-out;
+}
+#loading p {
+    font-family: 'Pacifico', cursive; color: #fff; font-size: 1.1rem;
+    letter-spacing: 1px; animation: pulse 2s infinite;
+}
+
+/* --- 3. BACKGROUND EFFECTS --- */
+.stars, .twinkling {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    display: block; pointer-events: none;
+}
+.stars {
+    background: transparent url('https://raw.githubusercontent.com/hudsonmarinho/header-footer/master/assets/images/stars.png') repeat top center;
+    z-index: 0;
+}
+.twinkling {
+    background: transparent url('https://raw.githubusercontent.com/hudsonmarinho/header-footer/master/assets/images/twinkling.png') repeat top center;
+    z-index: 1;
+    animation: move-twink-back 200s linear infinite;
+    opacity: 0.4;
+}
+
+#snowCanvas {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 2;
+}
+
+/* Hiệu ứng Mưa Tim (Heart Rain) */
+#heartRainContainer {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 50; overflow: hidden;
+}
+.heart {
+    position: absolute; color: #e74c3c;
+    animation: floatUp linear forwards; opacity: 0;
+}
+
+/* --- 4. DÂY ĐÈN NHÁY (LIGHT STRING) --- */
+.light-string {
+    position: fixed; top: -15px; left: 0; width: 100%; height: 60px;
+    z-index: 90; pointer-events: none; overflow: hidden; white-space: nowrap;
+}
+.light-string ul {
+    display: flex; justify-content: center; padding: 0; list-style: none;
+    width: 120%; margin-left: -10%;
+}
+.light-string li {
+    position: relative; width: 12px; height: 12px; border-radius: 50%;
+    margin: 0 15px; animation: flash 1.5s infinite alternate;
+    box-shadow: 0 0 10px rgba(255,255,255,0.8);
+}
+/* Dây điện nối các đèn */
+.light-string li::before {
+    content: ''; position: absolute; top: -8px; left: -20px;
+    width: 50px; height: 20px; border-bottom: 2px solid #444;
+    border-radius: 50%; z-index: -1; pointer-events: none;
+}
+/* Màu đèn */
+.light-string li:nth-child(odd) { background: var(--red); box-shadow: 0 0 15px var(--red); animation-duration: 1.1s; }
+.light-string li:nth-child(even) { background: var(--green); box-shadow: 0 0 15px var(--green); animation-duration: 1.8s; }
+.light-string li:nth-child(3n) { background: var(--gold); box-shadow: 0 0 15px var(--gold); animation-duration: 1.4s; }
+
+/* --- 5. MUSIC CONTROL --- */
+.music-control {
+    position: absolute; top: 20px; right: 20px; z-index: 100; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center;
+}
+.vinyl-record {
+    width: 45px; height: 45px; background: #111; border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.3);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 15px rgba(255,255,255,0.2); transition: transform 0.5s;
+}
+.vinyl-center {
+    width: 15px; height: 15px; background: var(--red);
+    border-radius: 50%; border: 3px solid #000;
+}
+.vinyl-record.running {
+    animation: spin 3s linear infinite;
+    box-shadow: 0 0 15px var(--gold); border-color: var(--gold);
+}
+.music-hint {
+    margin-top: 5px; font-size: 0.6rem; color: #fff; opacity: 0.8;
+    background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 4px;
+}
+
+/* --- 6. OVERLAY CHO SCENE 2 --- */
+#nightOverlay {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh;
+    background: rgba(0,0,0,0.85); z-index: 5;
+    opacity: 0; pointer-events: none; transition: opacity 1.5s ease;
+}
+#nightOverlay.active { opacity: 1; }
+#nightOverlay.lit { background: rgba(0,0,0,0.3); }
+
+/* --- 7. WRAPPER & SCENE LAYOUT --- */
+.wrapper {
+    position: relative; z-index: 10;
+    width: 100%; max-width: 450px; height: 100%;
+    display: flex; justify-content: center; align-items: center; margin: 0 auto;
+    padding: 20px;
+}
+
+.scene {
+    display: none; width: 100%; flex-direction: column; align-items: center; justify-content: center;
+    animation: fadeIn 1s ease; background: transparent;
+}
+.scene.active { display: flex; }
+
+/* --- SCENE 1: GLASS GLOBE --- */
+.globe-container {
+    display: flex; flex-direction: column; align-items: center;
+    position: relative; margin-top: -20px;
+}
+
+.glass-globe {
+    width: 280px; height: 280px; border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(3px);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 0 50px rgba(255,255,255,0.2), inset 0 0 30px rgba(255,255,255,0.1);
+    display: flex; align-items: center; justify-content: center;
+    text-align: center; position: relative; z-index: 2;
+}
+.glass-globe::after {
+    content: ''; position: absolute; top: 15%; left: 18%;
+    width: 50px; height: 25px; border-radius: 50%;
+    background: rgba(255,255,255,0.3); transform: rotate(-45deg); filter: blur(2px);
+}
+
+.globe-base {
+    width: 200px; display: flex; flex-direction: column; align-items: center;
+    margin-top: -35px; z-index: 1;
+}
+.base-top {
+    width: 200px; height: 20px; background: var(--wood);
+    border-radius: 50%; border: 1px solid rgba(0,0,0,0.3);
+}
+.base-bottom {
+    width: 200px; height: 40px; background: linear-gradient(to right, var(--wood-dark), var(--wood), var(--wood-dark));
+    border-radius: 0 0 50% 50%; margin-top: -10px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+    border: 1px solid rgba(0,0,0,0.3); border-top: none;
+    display: flex; justify-content: center; align-items: center;
+}
+.base-bottom::after {
+    content: 'For Bao'; font-family: 'Pacifico', cursive; color: #ffd700;
+    font-size: 0.9rem; letter-spacing: 1px; text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+}
+
+.music-icon { font-size: 2.5rem; animation: float 3s infinite; margin-bottom: 5px; }
+.christmas-title {
+    font-family: 'Dancing Script', cursive; font-size: 2.5rem;
+    color: var(--gold); text-shadow: 0 2px 5px rgba(0,0,0,0.5); line-height: 1.1;
+}
+.subtitle { margin-top: 5px; font-size: 1rem; color: #f0f0f0; }
+
+.christmas-btn {
+    margin-top: 15px; padding: 12px 35px; border-radius: 30px; border: none;
+    background: linear-gradient(135deg, var(--red), var(--dark-red));
+    box-shadow: 0 5px 15px rgba(212, 36, 38, 0.5); cursor: pointer;
+    transition: transform 0.2s; position: relative; overflow: hidden;
+    user-select: none;
+}
+.christmas-btn span { font-family: 'Pacifico', cursive; color: white; font-size: 1.2rem; z-index: 2; position: relative; }
+/* Hiệu ứng ấn nút cho mobile */
+.christmas-btn:active { transform: scale(0.95); }
+
+/* --- SCENE 2: CHAT & CANDLE --- */
+.chat-section {
+    display: flex; align-items: flex-end; gap: 15px; margin-bottom: 20px;
+    width: 100%; justify-content: center;
+}
+.santa-avatar img {
+    width: 55px; height: 55px; border-radius: 50%;
+    border: 3px solid white; background: var(--red);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+.chat-bubble {
+    background: white; color: #333; padding: 12px 18px;
+    border-radius: 18px 18px 18px 0; max-width: 65%;
+    font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 0.95rem;
+    position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    min-height: 45px; display: flex; align-items: center;
+}
+.chat-bubble::before {
+    content: ''; position: absolute; bottom: 0; left: -10px;
+    border-width: 12px 12px 0 0; border-style: solid;
+    border-color: white transparent transparent transparent;
+}
+
+.candle-section {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 60px; margin-top: 60px;
+}
+
+.candle { width: 50px; height: 110px; position: relative; cursor: pointer; }
+.wax {
+    width: 100%; height: 100%;
+    background: linear-gradient(to right, #e74c3c, #c0392b);
+    border-radius: 6px; box-shadow: inset -5px 0 5px rgba(0,0,0,0.3);
+}
+.wick {
+    width: 4px; height: 15px; background: #333;
+    position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
+}
+.flame {
+    width: 22px; height: 40px; background: orange;
+    border-radius: 50% 50% 20% 20%;
+    position: absolute; top: -45px; left: 50%;
+    transform: translateX(-50%) scale(0);
+    box-shadow: 0 0 20px #f1c40f, 0 0 60px #e67e22;
+    opacity: 0.9; transition: 0.5s; z-index: 15;
+}
+.candle.lit .flame { transform: translateX(-50%) scale(1); animation: flicker 0.1s infinite alternate; }
+
+.text-area { text-align: center; position: relative; z-index: 20; min-height: 50px; }
+.instruction { color: #ccc; font-size: 0.9rem; font-style: italic; animation: pulse 2s infinite; }
+.magic-msg {
+    font-family: 'Pacifico', cursive; color: var(--gold);
+    font-size: 1.2rem; text-shadow: 0 0 15px var(--gold);
+}
+
+/* --- SCENE 3: LÁ THƯ & POLAROID (Đã tối ưu cho 1 ảnh) --- */
+.letter-container { perspective: 1000px; width: 100%; padding: 0 5px; }
+/* Tìm và thay thế class .paper cũ */
+.paper {
+    background: #fffdf2; /* Màu kem giấy cũ */
+    color: #444; 
+    padding: 25px 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+    transform: rotate(-2deg);
+    position: relative; 
+    margin-bottom: 20px; 
+    border-radius: 4px;
+    
+    /* QUAN TRỌNG: Giới hạn chiều cao và cho phép cuộn nếu thư dài */
+    max-height: 65vh; /* Chiếm tối đa 65% chiều cao màn hình */
+    overflow-y: auto; /* Hiện thanh cuộn nếu chữ quá dài */
+    
+    /* Ẩn thanh cuộn cho đẹp (tùy chọn) */
+    scrollbar-width: thin;
+    scrollbar-color: #d42426 #fffdf2;
+}
+
+/* Tùy chỉnh thanh cuộn cho Chrome/Safari */
+.paper::-webkit-scrollbar { width: 6px; }
+.paper::-webkit-scrollbar-track { background: transparent; }
+.paper::-webkit-scrollbar-thumb { background-color: rgba(180, 50, 50, 0.3); border-radius: 10px; }
+
+/* Khung Polaroid (Single Photo Optimized) */
+.polaroid {
+    float: right; /* Đẩy ảnh sang phải để chữ bao quanh */
+    width: 100px; /* Thu nhỏ ảnh lại (cũ là 120px) */
+    padding: 5px 5px 20px 5px;
+    background: white; 
+    transform: rotate(4deg);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    margin: 0 0 10px 15px; /* Canh lề trái và dưới để chữ không dính sát */
+    position: relative;
+    z-index: 10;
+}
+.polaroid:hover { transform: rotate(0deg) scale(1.05); z-index: 10; }
+.polaroid img { 
+    width: 100%; 
+    height: auto; 
+    display: block; 
+    filter: sepia(20%); /* Thêm chút màu cũ kỹ cho hợp mood Trịnh */
+}
+
+/* Băng dính trong suốt */
+.polaroid .tape {
+    width: 35px; height: 12px; background: rgba(255,255,255,0.5);
+    position: absolute; top: -6px; left: 50%; transform: translateX(-50%) rotate(-2deg);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.2);
+}
+/* Sticker trái tim trang trí */
+.polaroid .sticker {
+    position: absolute; bottom: 5px; right: 5px; font-size: 1rem;
+    transform: rotate(15deg);
+}
+
+.letter-head { 
+    font-family: 'Pacifico', cursive; 
+    color: var(--red); 
+    font-size: 1.4rem; /* Giảm size tiêu đề để không bị ảnh che */
+    margin-bottom: 10px; 
+    line-height: 1.2;
+    padding-right: 110px; /* [QUAN TRỌNG] Chừa chỗ bên phải cho tấm ảnh, tránh chữ bị đè */
+}
+/* Tìm và thay thế class .letter-body cũ */
+.letter-body { 
+    font-family: 'Nunito', sans-serif; 
+    font-size: 0.9rem; /* Chữ nhỏ lại xíu cho tinh tế */
+    line-height: 1.6; /* Khoảng cách giữa các dòng trong 1 đoạn */
+    color: #2c3e50;
+    text-align: justify; /* Căn đều 2 bên lề */
+    margin-top: 10px;
+    clear: none; /* Cho phép chữ trôi bao quanh ảnh */
+}
+
+/* Sửa lỗi khoảng cách giữa các đoạn văn quá xa */
+.letter-body p {
+    margin-bottom: 12px; /* Chỉ cách nhau 12px thay vì mặc định */
+    margin-top: 0;
+}
+.sign { 
+    text-align: right; 
+    font-family: 'Dancing Script', cursive; 
+    font-size: 1.4rem; 
+    margin-top: 20px; 
+    color: var(--dark-red); 
+    font-weight: bold;
+}
+
+.secondary { background: linear-gradient(135deg, var(--green), #1e8449); box-shadow: 0 5px 20px rgba(39, 174, 96, 0.5); }
+
+/* --- SCENE 4: VOUCHERS --- */
+.gift-header { font-family: 'Dancing Script', cursive; color: var(--gold); font-size: 2.5rem; margin-bottom: 20px; }
+.rope {
+    width: 110%; height: 4px; background: #8d6e63;
+    margin-left: -5%; border-radius: 50%;
+    box-shadow: 0 5px 5px rgba(0,0,0,0.5); margin-bottom: 50px;
+}
+.stockings-wrapper { display: flex; justify-content: space-around; width: 100%; }
+.stocking-group { position: relative; cursor: pointer; width: 30%; text-align: center; -webkit-tap-highlight-color: transparent; }
+
+.hook { width: 4px; height: 18px; background: #bbb; margin: 0 auto; position: relative; top: -6px; z-index: -1; }
+.sock { font-size: 3.5rem; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.4)); transition: 0.3s; }
+.stocking-group:active .sock { transform: scale(1.2) rotate(10deg); }
+
+.voucher {
+    position: absolute; bottom: 130%; left: 50%;
+    transform: translateX(-50%) scale(0);
+    width: 150px; background: white; color: #333; padding: 12px; border-radius: 10px;
+    box-shadow: 0 5px 25px rgba(255, 255, 255, 0.2);
+    opacity: 0; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 100; pointer-events: none;
+}
+.voucher.revealed { transform: translateX(-50%) scale(1); opacity: 1; }
+.voucher::after {
+    content: ''; position: absolute; top: 100%; left: 50%; margin-left: -8px;
+    border-width: 8px; border-style: solid;
+    border-color: white transparent transparent transparent;
+}
+.voucher h3 { font-family: 'Pacifico', cursive; color: var(--red); font-size: 1rem; margin-bottom: 5px; }
+.voucher p { font-size: 0.8rem; line-height: 1.3; color: #555; }
+
+.end-msg {
+    margin-top: 50px; padding: 20px;
+    border: 2px dashed rgba(241, 196, 15, 0.5); border-radius: 15px;
+    background: rgba(0,0,0,0.5); backdrop-filter: blur(5px);
+    text-align: center; width: 90%;
+}
+.end-msg h3 { font-family: 'Pacifico', cursive; color: var(--gold); font-size: 2rem; margin-bottom: 10px; }
+
+.hidden-text { opacity: 0; transition: 1s; }
+.visible { opacity: 1; }
+
+/* --- ANIMATIONS --- */
+@keyframes flash { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+@keyframes spin { 100% { transform: rotate(360deg); } }
+@keyframes move-twink-back { from {background-position:0 0;} to {background-position:-10000px 5000px;} }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes flicker { 0% { opacity: 1; transform: translateX(-50%) scale(1); } 100% { opacity: 0.8; transform: translateX(-50%) scale(1.1); } }
+@keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+@keyframes pulse { 0% { opacity: 0.7; } 50% { opacity: 1; } 100% { opacity: 0.7; } }
+@keyframes heartbeat { 0% { transform: scale(1); } 25% { transform: scale(1.1); } 50% { transform: scale(1); } 75% { transform: scale(1.1); } 100% { transform: scale(1); } }
+@keyframes floatUp { 
+    0% { transform: translateY(100vh) scale(0.5); opacity: 1; } 
+    100% { transform: translateY(-10vh) scale(1.5) rotate(20deg); opacity: 0; } 
+}
+
+.bounce { animation: bounce 3s infinite ease-in-out; }
+.delay-1 { animation-delay: 0.5s; }
+.delay-2 { animation-delay: 1s; }
+
+/* --- MEDIA QUERIES (Mobile Nhỏ < 380px) --- */
+@media screen and (max-width: 380px) {
+    .glass-globe { width: 240px; height: 240px; }
+    .globe-base { transform: scale(0.85); margin-top: -30px; }
+    .christmas-title { font-size: 2rem; }
+    .polaroid { width: 90px; }
+    .letter-body { font-size: 0.9rem; line-height: 1.5rem; }
+    .sock { font-size: 2.8rem; }
+}

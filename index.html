@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <!-- Cấu hình Viewport chuẩn cho Mobile, chặn zoom để thao tác chạm mượt hơn -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- Tiêu đề & Meta tags cho Messenger/Zalo -->
+    <title>🎄 For My Beloved Bao ❤️</title>
+    <meta property="og:title" content="Gửi Công chúa Bảo 👸">
+    <meta property="og:description" content="Có một món quà nhỏ dành cho tuổi 21 của em nè! Mở ngay nhé ❤️">
+    <meta property="og:image" content="us.jpg"> <!-- Ảnh đại diện khi gửi link -->
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Font chữ dễ thương -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Pacifico&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- === PHẦN 1: CÁC HIỆU ỨNG NỀN & DECOR === -->
+
+    <!-- Màn hình chờ (Loading Screen) - Cute -->
+    <div id="loading">
+        <div class="heart-loader">❤️</div>
+        <p>Đang gói quà cho Bảo...</p>
+    </div>
+
+    <!-- Nền trời sao & Đêm -->
+    <div class="stars"></div>
+    <div class="twinkling"></div>
+    <div id="nightOverlay"></div>
+
+    <!-- Hiệu ứng Tuyết & Mưa tim -->
+    <canvas id="snowCanvas"></canvas>
+    <div id="heartRainContainer"></div> <!-- Container chứa mưa tim -->
+
+    <!-- Dây đèn nháy (Fairy Lights) - Thêm không khí Noel -->
+    <div class="light-string">
+        <ul>
+            <li></li><li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li><li></li>
+        </ul>
+    </div>
+
+    <!-- Trình phát nhạc (Đĩa than) -->
+    <div class="music-control" onclick="toggleMusic()">
+        <div class="vinyl-record">
+            <div class="vinyl-center"></div>
+        </div>
+        <!-- Tooltip nhỏ nhắc bật nhạc -->
+        <div class="music-hint">Em bé nhớ bật nhạc nha 🔊</div>
+    </div>
+
+    <audio id="bgMusic" loop>
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
+
+
+    <!-- === PHẦN 2: NỘI DUNG CHÍNH === -->
+    <main class="wrapper">
+        
+        <!-- SCENE 1: QUẢ CẦU TUYẾT (GLASS GLOBE) -->
+        <section id="scene1" class="scene active">
+            <div class="globe-container">
+                <div class="glass-globe">
+                    <div class="globe-content">
+                        <div class="music-icon">🎵</div>
+                        <h1 class="christmas-title">Many Happy Returns<br>& Birthday 21st</h1>
+                        <p class="subtitle">Dành tặng Công túa Bảo</p>
+                        
+                        <button id="startBtn" class="christmas-btn">
+                            <span>Em bé ấn vào đây 🎁</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Đế quả cầu -->
+                <div class="globe-base">
+                    <div class="base-top"></div>
+                    <div class="base-bottom"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCENE 2: CHAT & NẾN -->
+        <section id="scene2" class="scene">
+            <!-- Khu vực Chat -->
+            <div class="chat-section">
+                <div class="santa-avatar">
+                    <img src="santa.png" alt="Santa">
+                </div>
+                <div class="chat-bubble" id="typingText"></div>
+            </div>
+
+            <!-- Khu vực Nến -->
+            <div class="candle-section">
+                <div id="candle" class="candle">
+                    <div class="flame"></div>
+                    <div class="wick"></div>
+                    <div class="wax"></div>
+                </div>
+                
+                <div class="text-area">
+                    <p class="instruction">Bên này tối quá, Bảo thắp nến giúp anh nhé?</p>
+                    <p id="lightMsg" class="hidden-text magic-msg">
+                        Không phải nến đâu, là em vừa thắp sáng thế giới của anh đấy ✨
+                    </p>
+                </div>
+            </div>
+        </section>
+
+<!-- SCENE 3: LÁ THƯ & ẢNH (Phiên bản Lãng mạn & Hạnh phúc) -->
+        <section id="scene3" class="scene">
+            <div class="letter-container">
+                <div class="paper">
+                    <!-- Ảnh Polaroid -->
+                    <div class="polaroid">
+                        <img src="us.jpg" onerror="this.src='https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=400&auto=format&fit=crop'" alt="Our Moment">
+                        <div class="tape"></div>
+                        <div class="sticker">❤️</div>
+                    </div>
+
+                    <!-- Tiêu đề -->
+                    <h2 class="letter-head">Gửi Bảo, mùa đông ấm áp của anh...</h2>
+                    
+                    <div class="letter-body">
+                        <p>
+                            Bảo à, người ta thường bảo sinh nhật gần Giáng sinh thì thiệt thòi lắm, vì niềm vui riêng dễ bị hòa tan vào không khí lễ hội chung.
+                        </p>
+                        <p>
+                            Nhưng anh lại nghĩ khác. Em nhìn xem, cả thế giới đang giăng đèn kết hoa, phố phường lấp lánh và những bản nhạc vui tươi vang lên khắp chốn. Anh tin rằng, đó không chỉ là để đón Giáng sinh đâu, mà là cả thế giới đang vô tình giúp anh chuẩn bị một bữa tiệc lung linh nhất để chào đón tuổi 21 rực rỡ của em đấy.
+                        </p>
+                        <p>
+                            Cảm ơn định mệnh đã mang em đến vào những ngày lạnh giá này, để anh hiểu thế nào là mùa đông không lạnh. Với anh, em chính là món quà Giáng sinh tuyệt vời nhất mà thượng đế đã ưu ái dành tặng riêng cho anh.
+                        </p>
+                        <p>
+                            Chúc mừng sinh nhật công chúa. Tuổi mới rạng ngời và luôn tay trong tay nhé!
+                        </p>
+                    </div>
+                    
+                    <p class="sign">Yêu em và thương em,<br>Bi.</p>
+                </div>
+                
+                <button id="nextToGiftBtn" class="christmas-btn secondary">
+                    <span>Xem Điều Bất Ngờ ➜</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- SCENE 4: VOUCHERS -->
+        <section id="scene4" class="scene">
+            <h2 class="gift-header">Chọn quà đi nào!</h2>
+            <div class="rope"></div>
+
+            <div class="stockings-wrapper">
+                <!-- Vớ 1 -->
+                <div class="stocking-group" onclick="openGift(1)">
+                    <div class="hook"></div>
+                    <div class="sock bounce">🧦</div>
+                    <div class="voucher" id="gift1">
+                        <h3>Trà Sữa Vĩnh Viễn 🧋</h3>
+                        <p>Thẻ quyền lực: Order trà sữa bất cứ lúc nào, Bi ship ngay lập tức!</p>
+                    </div>
+                </div>
+
+                <!-- Vớ 2 -->
+                <div class="stocking-group" onclick="openGift(2)">
+                    <div class="hook"></div>
+                    <div class="sock bounce delay-1">🧦</div>
+                    <div class="voucher" id="gift2">
+                        <h3>Gói "Healing" 💆‍♀️</h3>
+                        <p>Massage vai gáy, gội đầu, lắng nghe than thở. Hạn dùng: Cả đời.</p>
+                    </div>
+                </div>
+
+                <!-- Vớ 3 -->
+                <div class="stocking-group" onclick="openGift(3)">
+                    <div class="hook"></div>
+                    <div class="sock bounce delay-2">🧦</div>
+                    <div class="voucher" id="gift3">
+                        <h3>Tình Yêu Siêu To ❤️</h3>
+                        <p>Luôn ủng hộ, yêu thương và chiều chuộng Bảo vô điều kiện.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="finalMessage" class="hidden-text end-msg">
+                <h3>🎂 Happy Birthday! 🎄</h3>
+                <p>Anh yêu em nhiều lắm!</p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Script -->
+    <script src="script.js"></script>
+</body>
+</html>
